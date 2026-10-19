@@ -6,11 +6,14 @@
 android_app {
     name: "BypassCharging",
     certificate: "platform",
+    defaults: ["SettingsLibDefaults"],
     srcs: ["src/**/*.java"],
     resource_dirs: ["res"],
     platform_apis: true,
     system_ext_specific: true,
     static_libs: [
+        "androidx.appcompat_appcompat",
+        "androidx.preference_preference",
         "org.lineageos.platform.internal",
     ],
 }

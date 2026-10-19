@@ -15,5 +15,19 @@
     <string name="toggle_failed">Could not change charging control</string>
     <string name="summary_smart">The battery charges up to <xliff:g id="limit">%1$d</xliff:g>%%, then the phone runs from the charger. Charging resumes at <xliff:g id="resume">%2$d</xliff:g>%%.</string>
     <string name="summary_bypass" formatted="false">The battery stops charging at its current level (below 70% it charges to 70% first) and the phone runs from the charger, for gaming or recording while plugged in. If the phone needs more power than the charger gives, the battery tops up again once it is 3% lower.</string>
-    <string name="summary_common">Bypass turns itself off after a reboot. It uses Settings &gt; Battery &gt; Charging control (limit mode); your previous charging control settings come back when it is turned off.</string>
+    <string name="bypass_switch_title">Use bypass charging</string>
+    <string name="category_bypass_mode">Bypass mode</string>
+    <string name="category_fast_charging">Fast charging</string>
+    <string name="limit_off_title">Full speed</string>
+    <string name="limit_off_summary">As fast as the charger and the phone temperature allow</string>
+    <string name="limit_on_title">Limit power</string>
+    <string name="limit_on_summary">Up to <xliff:g id="watts">%1$d</xliff:g> W into the battery</string>
+    <string name="limit_not_supported">Not available on this build</string>
+    <string name="limit_watts_title">Maximum power</string>
+    <string name="watts"><xliff:g id="watts">%1$d</xliff:g> W</string>
+    <string name="limit_failed">Could not write the fast charging limit</string>
+    <string name="reading_title">Charging now</string>
+    <string name="reading_idle">Not charging the battery</string>
+    <string name="reading_value"><xliff:g id="watts">%1$.1f</xliff:g> W (<xliff:g id="volts">%2$.2f</xliff:g> V, <xliff:g id="amps">%3$.2f</xliff:g> A)</string>
+    <string name="footer">Bypass turns itself off after a reboot. It uses Settings &gt; Battery &gt; Charging control (limit mode); your previous charging control settings come back when it is turned off.\n\nThe power limit stays on after a reboot. It caps the power going into the battery, so the charger itself draws a little more. Overheating protection can still slow charging down further.</string>
 </resources>

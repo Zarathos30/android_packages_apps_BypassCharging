@@ -16,12 +16,12 @@
         android:label="@string/app_name"
         android:icon="@drawable/ic_bypass_charging"
         android:supportsRtl="true"
-        android:allowBackup="false">
+        android:allowBackup="false"
+        android:theme="@style/Theme.SubSettingsBase.Expressive">
 
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.DeviceDefault.DayNight"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
@@ -39,7 +39,8 @@
             </intent-filter>
         </service>
 
-        <!-- Turns bypass off after every boot, before the first unlock -->
+        <!-- Turns bypass off after every boot, before the first unlock, and sets the fast charging
+             limit again (the kernel forgets it on reboot) -->
         <receiver
             android:name=".BootReceiver"
             android:directBootAware="true"
