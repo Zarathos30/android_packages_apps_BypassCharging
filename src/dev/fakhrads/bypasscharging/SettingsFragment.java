@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.settingslib.widget.FooterPreference;
 import com.android.settingslib.widget.MainSwitchPreference;
@@ -32,20 +33,22 @@ import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 import com.android.settingslib.widget.SliderPreference;
 
 /**
- * The settings page: bypass on/off and its mode, then the fast charging limit with a live
- * reading of the power going into the battery.
+ * The settings page: bypass on/off and its mode, then cool charging and the fast charging limit
+ * with a live reading of the power going into the battery.
  */
 public class SettingsFragment extends SettingsBasePreferenceFragment {
     private static final long READING_INTERVAL_MS = 2000;
 
     private BypassCharging mBypass;
     private ChargeLimit mLimit;
+    private CoolCharging mCoolCharging;
     private BatteryManager mBatteryManager;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private MainSwitchPreference mBypassSwitch;
     private SelectorWithWidgetPreference mModeSmart;
     private SelectorWithWidgetPreference mModeBypass;
+    private SwitchPreferenceCompat mCool;
     private SelectorWithWidgetPreference mLimitOff;
     private SelectorWithWidgetPreference mLimitOn;
     private SliderPreference mWatts;
@@ -78,6 +81,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
         Context context = requireContext();
         mBypass = new BypassCharging(context);
         mLimit = new ChargeLimit(context);
+        mCoolCharging = CoolCharging.get(context);
         mBatteryManager = context.getSystemService(BatteryManager.class);
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
@@ -106,6 +110,18 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
         PreferenceCategory speed = new PreferenceCategory(context);
         speed.setTitle(R.string.category_fast_charging);
         screen.addPreference(speed);
+        mCool = new SwitchPreferenceCompat(context);
+        mCool.setTitle(R.string.cool_title);
+        mCool.setSummary(R.string.cool_summary);
+        mCool.setIconSpaceReserved(false);
+        // Not persisted by the preference: CoolCharging keeps the value
+        mCool.setPersistent(false);
+        mCool.setOnPreferenceChangeListener((pref, value) -> {
+            mCoolCharging.setEnabled((Boolean) value);
+            return true;
+        });
+        speed.addPreference(mCool);
+
         mLimitOff = selector(speed, R.string.limit_off_title, getString(R.string.limit_off_summary));
         mLimitOn = selector(speed, R.string.limit_on_title, null);
         mLimitOff.setOnClickListener(pref -> setLimit(false, mLimit.getWatts()));
@@ -208,6 +224,8 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
         mModeBypass.setChecked(bypassMode);
 
         boolean limitSupported = mLimit.isSupported();
+        mCool.setEnabled(limitSupported);
+        mCool.setChecked(mCoolCharging.isEnabled());
         boolean limited = mLimit.isEnabled();
         int watts = mLimit.getWatts();
         mLimitOff.setEnabled(limitSupported);

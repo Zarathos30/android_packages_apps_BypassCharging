@@ -18,6 +18,8 @@
     <string name="bypass_switch_title">Gunakan bypass charging</string>
     <string name="category_bypass_mode">Mode bypass</string>
     <string name="category_fast_charging">Pengisian cepat</string>
+    <string name="cool_title">Pengisian dingin</string>
+    <string name="cool_summary">Memperlambat pengisian cepat begitu suhu baterai melewati 40 °C, supaya tetap di sekitar 42 °C. Pengisian sedikit lebih lama saat HP hangat.</string>
     <string name="limit_off_title">Kecepatan penuh</string>
     <string name="limit_off_summary">Secepat yang diizinkan charger dan suhu HP</string>
     <string name="limit_on_title">Batasi daya</string>
@@ -29,5 +31,5 @@
     <string name="reading_title">Pengisian saat ini</string>
     <string name="reading_idle">Baterai tidak sedang diisi</string>
     <string name="reading_value"><xliff:g id="watts">%1$.1f</xliff:g> W (<xliff:g id="volts">%2$.2f</xliff:g> V, <xliff:g id="amps">%3$.2f</xliff:g> A)</string>
-    <string name="footer">Bypass otomatis mati setelah reboot. Fitur ini memakai Setelan &gt; Baterai &gt; Kontrol pengisian daya (mode batas); setelan sebelumnya dikembalikan saat bypass dimatikan.\n\nBatas daya tetap aktif setelah reboot. Yang dibatasi adalah daya yang masuk ke baterai, jadi daya dari charger sedikit lebih besar. Proteksi panas tetap bisa memperlambat pengisian lebih jauh.</string>
+    <string name="footer">Bypass otomatis mati setelah reboot. Fitur ini memakai Setelan &gt; Baterai &gt; Kontrol pengisian daya (mode batas); setelan sebelumnya dikembalikan saat bypass dimatikan.\n\nBatas daya tetap aktif setelah reboot. Yang dibatasi adalah daya yang masuk ke baterai, jadi daya dari charger sedikit lebih besar. Proteksi panas tetap bisa memperlambat pengisian lebih jauh.\n\nPengisian dingin menurunkan arus bertahap mulai 40 °C (10 A, lalu 7 A di 41 °C, 4,5 A di 42 °C dan 2,5 A mulai 43 °C) dan melepas batasnya lagi saat baterai mendingin.</string>
 </resources>

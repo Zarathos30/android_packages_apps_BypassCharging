@@ -13,6 +13,24 @@ Two modes, chosen on the page that opens with a long press on the tile:
 Bypass turns itself off after every reboot (`BootReceiver`, on `LOCKED_BOOT_COMPLETED`), and the charging control
 settings from before it was turned on come back whenever it is turned off.
 
+## Cool charging
+
+On by default (switch under Fast charging). The charger driver's JEITA tables keep full current up to 48 °C,
+so a phone charging at 90 W reaches about 47 °C before it slows down. Cool charging steps the battery current
+down instead, with 0.5 °C of hysteresis:
+
+| battery | limit |
+|---|---|
+| below 40 °C | none |
+| 40 °C | 10 A |
+| 41 °C | 7 A |
+| 42 °C | 4.5 A |
+| 43 °C and up | 2.5 A |
+
+It is its own voter (`coolcharging`) on the MCA `ichg_limit` node, next to the power limit (`bypasscharging`).
+The driver takes the lowest vote, so neither can make charging faster than the other or than the thermal limits.
+The app's process is persistent and follows `ACTION_BATTERY_CHANGED`; the vote is dropped on unplug.
+
 ## How it works
 
 The app only uses the Lineage SDK: it reads charging control through `lineageos.health.HealthInterface` and

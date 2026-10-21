@@ -80,14 +80,18 @@ final class ChargeLimit {
 
     /** Writes the saved setting to the kernel. */
     boolean apply() {
-        int ma = isEnabled() ? getWatts() * 1000000 / REFERENCE_MV : 0;
-        return write("quick " + ma + "#" + ma) && write("buck " + ma);
+        return vote(USER, isEnabled() ? getWatts() * 1000000 / REFERENCE_MV : 0);
     }
 
-    private static boolean write(String command) {
+    /** Sets the battery current limit (mA) of voter {@code user}; 0 drops its vote. */
+    static boolean vote(String user, int ma) {
+        return write(user, "quick " + ma + "#" + ma) && write(user, "buck " + ma);
+    }
+
+    private static boolean write(String user, String command) {
         // One vote per write: the driver parses a single "user type value" per store
         try (FileOutputStream out = new FileOutputStream(NODE)) {
-            out.write((USER + " " + command).getBytes(StandardCharsets.US_ASCII));
+            out.write((user + " " + command).getBytes(StandardCharsets.US_ASCII));
             return true;
         } catch (IOException e) {
             Log.e(TAG, "Failed to write '" + command + "' to " + NODE, e);

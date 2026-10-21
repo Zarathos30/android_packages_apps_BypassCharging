@@ -12,7 +12,12 @@
     <uses-permission android:name="lineageos.permission.WRITE_SECURE_SETTINGS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- Persistent (allowed for system apps) and direct boot aware, so cool charging follows the
+         battery temperature from boot on -->
     <application
+        android:name=".BypassChargingApp"
+        android:persistent="true"
+        android:directBootAware="true"
         android:label="@string/app_name"
         android:icon="@drawable/ic_bypass_charging"
         android:supportsRtl="true"
