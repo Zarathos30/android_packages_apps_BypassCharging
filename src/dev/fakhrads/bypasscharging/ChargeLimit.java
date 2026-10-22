@@ -22,8 +22,11 @@ import java.nio.charset.StandardCharsets;
  * limits: it can only make charging slower than stock, never faster.
  * - quick ("single#multi" mA): charge pump current, with one or both pumps
  * - buck (mA): PMIC charging, used by slow chargers and when the charge pump hands over
- * Writing 0 drops the limit. The votes stay across unplugging and are gone after a reboot, so
- * BootReceiver applies the limit again.
+ * Writing 0 drops a buck vote, but not a quick one: the driver votes "enabled, 0" for quick, and 0
+ * is the lowest value of the MIN votable, so it reads as no limit and wins over every other vote,
+ * the power limit of this app and cool charging included. A quick vote is dropped by writing a
+ * value above anything the battery takes instead. The votes stay across unplugging and are gone
+ * after a reboot, so BootReceiver applies the limit again.
  *
  * The driver limits current into the battery, not power from the charger. The limit is set in
  * watts and turned into current at REFERENCE_MV, a battery voltage typical of fast charging;
@@ -46,6 +49,8 @@ final class ChargeLimit {
     static final int STEP_WATTS = 5;
     static final int DEFAULT_WATTS = 30;
     private static final int REFERENCE_MV = 4200;
+    // No limit on the quick path: above the 15.6 A the battery takes at most, so it never wins
+    private static final int NO_LIMIT_MA = 30000;
 
     private static final String PREFS = "bypass_charging";
     private static final String KEY_ENABLED = "limit_enabled";
@@ -85,7 +90,8 @@ final class ChargeLimit {
 
     /** Sets the battery current limit (mA) of voter {@code user}; 0 drops its vote. */
     static boolean vote(String user, int ma) {
-        return write(user, "quick " + ma + "#" + ma) && write(user, "buck " + ma);
+        int quick = ma > 0 ? ma : NO_LIMIT_MA;
+        return write(user, "quick " + quick + "#" + quick) && write(user, "buck " + ma);
     }
 
     private static boolean write(String user, String command) {
