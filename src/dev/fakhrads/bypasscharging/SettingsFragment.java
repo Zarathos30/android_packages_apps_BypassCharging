@@ -18,12 +18,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.service.quicksettings.TileService;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.android.settingslib.widget.FooterPreference;
@@ -53,10 +55,76 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
     private SelectorWithWidgetPreference mLimitOn;
     private SliderPreference mWatts;
     private Preference mReading;
+    private HeroPreference mHeroPreference;
 
     // From the last ACTION_BATTERY_CHANGED
     private int mVoltageMv;
     private int mStatus = BatteryManager.BATTERY_STATUS_UNKNOWN;
+    private int mBatteryTempTenths;
+
+    private class HeroPreference extends Preference {
+        private TextView mTitleView;
+        private TextView mSubtitleView;
+        private TextView mTempView;
+        private TextView mModeView;
+
+        public HeroPreference(Context context) {
+            super(context);
+            setLayoutResource(R.layout.preference_charging_hero);
+            setSelectable(false);
+        }
+
+        @Override
+        public void onBindViewHolder(PreferenceViewHolder holder) {
+            super.onBindViewHolder(holder);
+            mTitleView = (TextView) holder.findViewById(R.id.hero_title);
+            mSubtitleView = (TextView) holder.findViewById(R.id.hero_subtitle);
+            mTempView = (TextView) holder.findViewById(R.id.chip_temp);
+            mModeView = (TextView) holder.findViewById(R.id.chip_mode);
+            updateHeroViews();
+        }
+
+        public void updateHeroViews() {
+            if (mTitleView == null) return;
+            double tempC = mBatteryTempTenths / 10.0;
+            if (mBatteryTempTenths > 0) {
+                mTempView.setText(String.format("Suhu: %.1f °C", tempC));
+            } else {
+                mTempView.setText("Suhu: --.- °C");
+            }
+
+            boolean bypassActive = mBypass != null && mBypass.isActive();
+            if (bypassActive) {
+                mTitleView.setText(R.string.tile_label);
+                mSubtitleView.setText(R.string.reading_idle);
+                mModeView.setText(R.string.mode_bypass);
+            } else if (mStatus == BatteryManager.BATTERY_STATUS_CHARGING) {
+                int microAmps = mBatteryManager == null ? 0
+                        : mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
+                double amps = Math.abs(microAmps) / 1e6;
+                double volts = mVoltageMv / 1e3;
+                double watts = amps * volts;
+                if (watts > 0.1) {
+                    mTitleView.setText(String.format("Mengisi (%.1f W)", watts));
+                    mSubtitleView.setText(String.format("%.2f V · %.2f A", volts, amps));
+                } else {
+                    mTitleView.setText(R.string.reading_title);
+                    mSubtitleView.setText(R.string.reading_idle);
+                }
+                if (mCoolCharging != null && mCoolCharging.isEnabled()) {
+                    mModeView.setText(R.string.cool_title);
+                } else if (mLimit != null && mLimit.isLimited()) {
+                    mModeView.setText(getString(R.string.watts, mLimit.getWatts()));
+                } else {
+                    mModeView.setText(R.string.limit_off_title);
+                }
+            } else {
+                mTitleView.setText(R.string.app_name);
+                mSubtitleView.setText(R.string.reading_idle);
+                mModeView.setText(R.string.status_off);
+            }
+        }
+    }
 
     private final BroadcastReceiver mBatteryReceiver = new BroadcastReceiver() {
         @Override
@@ -64,6 +132,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
             mVoltageMv = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0);
             mStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS,
                     BatteryManager.BATTERY_STATUS_UNKNOWN);
+            mBatteryTempTenths = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
             updateReading();
         }
     };
@@ -86,6 +155,9 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
 
+        mHeroPreference = new HeroPreference(context);
+        screen.addPreference(mHeroPreference);
+
         mBypassSwitch = new MainSwitchPreference(context);
         mBypassSwitch.setTitle(R.string.bypass_switch_title);
         mBypassSwitch.setOnPreferenceChangeListener((pref, value) -> {
@@ -100,6 +172,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
 
         PreferenceCategory modes = new PreferenceCategory(context);
         modes.setTitle(R.string.category_bypass_mode);
+        modes.setIcon(R.drawable.ic_bypass_charging);
         screen.addPreference(modes);
         mModeSmart = selector(modes, R.string.mode_smart, getString(R.string.summary_smart,
                 BypassCharging.SMART_LIMIT, BypassCharging.SMART_LIMIT - 3));
@@ -109,6 +182,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
 
         PreferenceCategory speed = new PreferenceCategory(context);
         speed.setTitle(R.string.category_fast_charging);
+        speed.setIcon(R.drawable.ic_battery_charge);
         screen.addPreference(speed);
         mCool = new SwitchPreferenceCompat(context);
         mCool.setTitle(R.string.cool_title);
@@ -237,9 +311,16 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
         mWatts.setValue(watts);
         mWatts.setSummary(getString(R.string.watts, watts));
         mWatts.setEnabled(limitSupported && limited);
+
+        if (mHeroPreference != null) {
+            mHeroPreference.updateHeroViews();
+        }
     }
 
     private void updateReading() {
+        if (mHeroPreference != null) {
+            mHeroPreference.updateHeroViews();
+        }
         if (mReading == null) {
             return;
         }

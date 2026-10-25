@@ -22,7 +22,7 @@
         android:icon="@drawable/ic_bypass_charging"
         android:supportsRtl="true"
         android:allowBackup="false"
-        android:theme="@style/Theme.SubSettingsBase.Expressive">
+        android:theme="@style/Theme.BypassCharging">
 
         <activity
             android:name=".MainActivity"
