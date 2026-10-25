@@ -113,7 +113,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
                 }
                 if (mCoolCharging != null && mCoolCharging.isEnabled()) {
                     mModeView.setText(R.string.cool_title);
-                } else if (mLimit != null && mLimit.isLimited()) {
+                } else if (mLimit != null && mLimit.isEnabled()) {
                     mModeView.setText(getString(R.string.watts, mLimit.getWatts()));
                 } else {
                     mModeView.setText(R.string.limit_off_title);
