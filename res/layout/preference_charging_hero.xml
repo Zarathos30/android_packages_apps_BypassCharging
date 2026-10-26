@@ -4,11 +4,12 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
-    android:paddingEnd="16dp"
     android:paddingTop="8dp"
+    android:paddingEnd="16dp"
     android:paddingBottom="12dp">
 
     <LinearLayout
@@ -26,11 +27,13 @@
 
             <ImageView
                 android:id="@+id/hero_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_hero_icon"
+                android:contentDescription="@null"
+                android:padding="12dp"
                 android:src="@drawable/ic_bypass_charging"
-                android:tint="@color/hero_card_title"
-                android:contentDescription="@null" />
+                android:tint="@color/settingslib_materialColorOnPrimary" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -43,19 +46,19 @@
                     android:id="@+id/hero_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/reading_title"
-                    android:textColor="@color/hero_card_title"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textAppearance="@style/TextAppearance.SettingsLib.TitleLarge.Emphasized"
+                    android:textColor="@color/settingslib_materialColorOnPrimaryContainer"
+                    tools:text="Charging now" />
 
                 <TextView
                     android:id="@+id/hero_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="@string/reading_idle"
-                    android:textColor="@color/hero_card_subtitle"
-                    android:textSize="13sp" />
+                    android:alpha="0.8"
+                    android:textAppearance="@style/TextAppearance.SettingsLib.BodyMedium"
+                    android:textColor="@color/settingslib_materialColorOnPrimaryContainer"
+                    tools:text="Not charging the battery" />
             </LinearLayout>
         </LinearLayout>
 
@@ -63,36 +66,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:baselineAligned="false"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/chip_temp"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@drawable/bg_chip"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
                 android:paddingStart="12dp"
-                android:paddingTop="6dp"
+                android:paddingTop="8dp"
                 android:paddingEnd="12dp"
-                android:paddingBottom="6dp"
-                android:text="Battery: --.- °C"
-                android:textColor="@color/chip_text"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:paddingBottom="8dp"
+                android:textAppearance="@style/TextAppearance.SettingsLib.LabelMedium"
+                android:textColor="@color/settingslib_materialColorOnPrimaryContainer" />
 
             <TextView
                 android:id="@+id/chip_mode"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_weight="1"
                 android:background="@drawable/bg_chip"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
                 android:paddingStart="12dp"
-                android:paddingTop="6dp"
+                android:paddingTop="8dp"
                 android:paddingEnd="12dp"
-                android:paddingBottom="6dp"
-                android:text="Mode: Off"
-                android:textColor="@color/chip_text"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:paddingBottom="8dp"
+                android:textAppearance="@style/TextAppearance.SettingsLib.LabelMedium"
+                android:textColor="@color/settingslib_materialColorOnPrimaryContainer" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

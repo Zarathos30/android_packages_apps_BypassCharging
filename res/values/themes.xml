@@ -4,12 +4,8 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
-    <!-- Pixel-like Material You Theme for BypassCharging -->
+    <!-- Settings Expressive theme: system bars, clipping and colours come from the parent -->
     <style name="Theme.BypassCharging" parent="Theme.SubSettingsBase.Expressive">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:clipToPadding">false</item>
-        <item name="android:clipChildren">false</item>
         <item name="android:windowAnimationStyle">@style/Animation.BypassCharging</item>
     </style>
 

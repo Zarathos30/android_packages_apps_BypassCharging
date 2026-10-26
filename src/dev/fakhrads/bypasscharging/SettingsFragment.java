@@ -54,7 +54,6 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
     private SelectorWithWidgetPreference mLimitOff;
     private SelectorWithWidgetPreference mLimitOn;
     private SliderPreference mWatts;
-    private Preference mReading;
     private HeroPreference mHeroPreference;
 
     // From the last ACTION_BATTERY_CHANGED
@@ -86,11 +85,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
 
         public void updateHeroViews() {
             if (mTitleView == null) return;
-            double tempC = mBatteryTempTenths / 10.0;
             if (mBatteryTempTenths > 0) {
-                mTempView.setText(String.format("Suhu: %.1f °C", tempC));
+                mTempView.setText(getString(R.string.hero_temp, mBatteryTempTenths / 10.0));
             } else {
-                mTempView.setText("Suhu: --.- °C");
+                mTempView.setText(R.string.hero_temp_unknown);
             }
 
             boolean bypassActive = mBypass != null && mBypass.isActive();
@@ -101,12 +99,13 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
             } else if (mStatus == BatteryManager.BATTERY_STATUS_CHARGING) {
                 int microAmps = mBatteryManager == null ? 0
                         : mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
-                double amps = Math.abs(microAmps) / 1e6;
+                // The sign of current_now differs between drivers
+                double amps = microAmps == Integer.MIN_VALUE ? 0 : Math.abs(microAmps) / 1e6;
                 double volts = mVoltageMv / 1e3;
                 double watts = amps * volts;
                 if (watts > 0.1) {
-                    mTitleView.setText(String.format("Mengisi (%.1f W)", watts));
-                    mSubtitleView.setText(String.format("%.2f V · %.2f A", volts, amps));
+                    mTitleView.setText(getString(R.string.hero_charging_title, watts));
+                    mSubtitleView.setText(getString(R.string.hero_charging_detail, volts, amps));
                 } else {
                     mTitleView.setText(R.string.reading_title);
                     mSubtitleView.setText(R.string.reading_idle);
@@ -172,7 +171,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
 
         PreferenceCategory modes = new PreferenceCategory(context);
         modes.setTitle(R.string.category_bypass_mode);
-        modes.setIcon(R.drawable.ic_bypass_charging);
+        modes.setIconSpaceReserved(false);
         screen.addPreference(modes);
         mModeSmart = selector(modes, R.string.mode_smart, getString(R.string.summary_smart,
                 BypassCharging.SMART_LIMIT, BypassCharging.SMART_LIMIT - 3));
@@ -182,7 +181,7 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
 
         PreferenceCategory speed = new PreferenceCategory(context);
         speed.setTitle(R.string.category_fast_charging);
-        speed.setIcon(R.drawable.ic_battery_charge);
+        speed.setIconSpaceReserved(false);
         screen.addPreference(speed);
         mCool = new SwitchPreferenceCompat(context);
         mCool.setTitle(R.string.cool_title);
@@ -216,12 +215,6 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
             return true;
         });
         speed.addPreference(mWatts);
-
-        mReading = new Preference(context);
-        mReading.setTitle(R.string.reading_title);
-        mReading.setSelectable(false);
-        mReading.setIconSpaceReserved(false);
-        speed.addPreference(mReading);
 
         FooterPreference footer = new FooterPreference(context);
         footer.setSummary(R.string.footer);
@@ -321,20 +314,6 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
         if (mHeroPreference != null) {
             mHeroPreference.updateHeroViews();
         }
-        if (mReading == null) {
-            return;
-        }
-        int microAmps = mBatteryManager == null ? 0
-                : mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW);
-        if (mStatus != BatteryManager.BATTERY_STATUS_CHARGING || microAmps == 0
-                || microAmps == Integer.MIN_VALUE || mVoltageMv <= 0) {
-            mReading.setSummary(R.string.reading_idle);
-            return;
-        }
-        // The sign of current_now differs between drivers
-        double amps = Math.abs(microAmps) / 1e6;
-        double volts = mVoltageMv / 1e3;
-        mReading.setSummary(getString(R.string.reading_value, amps * volts, volts, amps));
     }
 
     private void showFailed(String error) {

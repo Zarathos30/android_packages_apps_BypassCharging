@@ -31,6 +31,9 @@
     <string name="limit_failed">Gagal menulis batas pengisian cepat</string>
     <string name="reading_title">Pengisian saat ini</string>
     <string name="reading_idle">Baterai tidak sedang diisi</string>
-    <string name="reading_value"><xliff:g id="watts">%1$.1f</xliff:g> W (<xliff:g id="volts">%2$.2f</xliff:g> V, <xliff:g id="amps">%3$.2f</xliff:g> A)</string>
+    <string name="hero_temp">Baterai <xliff:g id="temp">%1$.1f</xliff:g> °C</string>
+    <string name="hero_temp_unknown">Baterai -- °C</string>
+    <string name="hero_charging_title">Mengisi <xliff:g id="watts">%1$.1f</xliff:g> W</string>
+    <string name="hero_charging_detail"><xliff:g id="volts">%1$.2f</xliff:g> V · <xliff:g id="amps">%2$.2f</xliff:g> A</string>
     <string name="footer">Bypass otomatis mati setelah reboot. Fitur ini memakai Setelan &gt; Baterai &gt; Kontrol pengisian daya (mode batas); setelan sebelumnya dikembalikan saat bypass dimatikan.\n\nBatas daya tetap aktif setelah reboot. Yang dibatasi adalah daya yang masuk ke baterai, jadi daya dari charger sedikit lebih besar. Proteksi panas tetap bisa memperlambat pengisian lebih jauh.\n\nPengisian dingin menurunkan arus bertahap mulai 40 °C (10 A, lalu 7 A di 41 °C, 4,5 A di 42 °C dan 2,5 A mulai 43 °C) dan melepas batasnya lagi saat baterai mendingin.</string>
 </resources>
