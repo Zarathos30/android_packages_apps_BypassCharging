@@ -4,6 +4,7 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="@color/settingslib_materialColorPrimary" />
+    android:shape="rectangle">
+    <corners android:radius="20dp" />
+    <solid android:color="@color/settingslib_materialColorSurfaceContainerHigh" />
 </shape>

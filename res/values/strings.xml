@@ -31,8 +31,12 @@
     <string name="limit_failed">Could not write the fast charging limit</string>
     <string name="reading_title">Charging now</string>
     <string name="reading_idle">Not charging the battery</string>
-    <string name="hero_temp">Battery <xliff:g id="temp">%1$.1f</xliff:g> °C</string>
-    <string name="hero_temp_unknown">Battery -- °C</string>
+    <string name="hero_temp"><xliff:g id="temp">%1$.1f</xliff:g> °C</string>
+    <string name="hero_temp_unknown">-</string>
+    <string name="hero_stat_battery">Battery</string>
+    <string name="hero_stat_mode">Mode</string>
+    <string name="hero_stat_usb">USB port</string>
+    <string name="hero_stat_board">Board</string>
     <string name="hero_charging_title">Charging at <xliff:g id="watts">%1$.1f</xliff:g> W</string>
     <string name="hero_charging_detail"><xliff:g id="volts">%1$.2f</xliff:g> V · <xliff:g id="amps">%2$.2f</xliff:g> A</string>
     <string name="footer">Bypass turns itself off after a reboot. It uses Settings &gt; Battery &gt; Charging control (limit mode); your previous charging control settings come back when it is turned off.\n\nThe power limit stays on after a reboot. It caps the power going into the battery, so the charger itself draws a little more. Overheating protection can still slow charging down further.\n\nCool charging steps the current down from 40 °C (10 A, then 7 A at 41 °C, 4.5 A at 42 °C and 2.5 A from 43 °C) and lifts the limit again as the battery cools.</string>

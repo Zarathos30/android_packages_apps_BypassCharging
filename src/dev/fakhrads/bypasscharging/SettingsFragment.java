@@ -34,12 +34,21 @@ import com.android.settingslib.widget.SelectorWithWidgetPreference;
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
 import com.android.settingslib.widget.SliderPreference;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 /**
  * The settings page: bypass on/off and its mode, then cool charging and the fast charging limit
  * with a live reading of the power going into the battery.
  */
 public class SettingsFragment extends SettingsBasePreferenceFragment {
     private static final long READING_INTERVAL_MS = 2000;
+
+    // The USB node is in tenths of a degree, the board node in thousandths
+    private static final String USB_TEMP = "/sys/class/power_supply/usb/temp";
+    private static final String BOARD_TEMP =
+            "/sys/devices/virtual/thermal/thermal_message/board_sensor_temp";
 
     private BypassCharging mBypass;
     private ChargeLimit mLimit;
@@ -64,8 +73,10 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
     private class HeroPreference extends Preference {
         private TextView mTitleView;
         private TextView mSubtitleView;
-        private TextView mTempView;
+        private TextView mBatteryView;
         private TextView mModeView;
+        private TextView mUsbView;
+        private TextView mBoardView;
 
         public HeroPreference(Context context) {
             super(context);
@@ -78,18 +89,19 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
             super.onBindViewHolder(holder);
             mTitleView = (TextView) holder.findViewById(R.id.hero_title);
             mSubtitleView = (TextView) holder.findViewById(R.id.hero_subtitle);
-            mTempView = (TextView) holder.findViewById(R.id.chip_temp);
-            mModeView = (TextView) holder.findViewById(R.id.chip_mode);
+            mBatteryView = (TextView) holder.findViewById(R.id.stat_battery);
+            mModeView = (TextView) holder.findViewById(R.id.stat_mode);
+            mUsbView = (TextView) holder.findViewById(R.id.stat_usb);
+            mBoardView = (TextView) holder.findViewById(R.id.stat_board);
             updateHeroViews();
         }
 
         public void updateHeroViews() {
             if (mTitleView == null) return;
-            if (mBatteryTempTenths > 0) {
-                mTempView.setText(getString(R.string.hero_temp, mBatteryTempTenths / 10.0));
-            } else {
-                mTempView.setText(R.string.hero_temp_unknown);
-            }
+            mBatteryView.setText(formatTemp(mBatteryTempTenths > 0 ? mBatteryTempTenths / 10.0
+                    : Double.NaN));
+            mUsbView.setText(formatTemp(readTemp(USB_TEMP, 10.0)));
+            mBoardView.setText(formatTemp(readTemp(BOARD_TEMP, 1000.0)));
 
             boolean bypassActive = mBypass != null && mBypass.isActive();
             if (bypassActive) {
@@ -307,6 +319,21 @@ public class SettingsFragment extends SettingsBasePreferenceFragment {
 
         if (mHeroPreference != null) {
             mHeroPreference.updateHeroViews();
+        }
+    }
+
+    private String formatTemp(double celsius) {
+        // 0 and below is a sensor that reports nothing, not a temperature
+        return celsius > 0 && celsius < 150 ? getString(R.string.hero_temp, celsius)
+                : getString(R.string.hero_temp_unknown);
+    }
+
+    /** A temperature from a sysfs node, in degrees; NaN if the node cannot be read. */
+    private static double readTemp(String path, double divisor) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            return Integer.parseInt(reader.readLine().trim()) / divisor;
+        } catch (IOException | RuntimeException e) {
+            return Double.NaN;
         }
     }
 
